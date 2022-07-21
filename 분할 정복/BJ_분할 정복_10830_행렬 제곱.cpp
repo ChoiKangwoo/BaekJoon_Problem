@@ -3,21 +3,23 @@
 
 using namespace std;
 
+//행렬의 덧셈 함수
 void M_A(vector <vector<int>> &A, vector <vector<int>> &B, vector <vector<int>> &C)
 {
 	for (int i = 0; i < A.size(); i++)
 		for (int j = 0; j < A[i].size(); j++)
-			C[i][j] = A[i][j] + B[i][j];
+			C[i][j] = (A[i][j] + B[i][j]);
 }
 //행렬의 뺄셈 함수
 void M_S(vector <vector<int>> &A, vector <vector<int>> &B, vector <vector<int>> &C)
 {
 	for (int i = 0; i < A.size(); i++)
 		for (int j = 0; j < A[i].size(); j++)
-			C[i][j] = A[i][j] - B[i][j];
+			C[i][j] = (A[i][j] - B[i][j]);
 }
 
-vector <vector<int>> split_matrix(vector<vector<int>>&A,int col,int row)
+//인자 col 과 row 에 따라서 행렬을 쪼갤 범위를 정하여 쪼개진 행렬을 반환하는 함수
+vector <vector<int>> split_matrix(vector<vector<int>>&A, int col, int row)
 {
 	vector<vector<int>> partition(A.size() / 2, vector<int>(A.size() / 2));
 	for (int i = 0; i < partition.size(); i++)
@@ -27,10 +29,11 @@ vector <vector<int>> split_matrix(vector<vector<int>>&A,int col,int row)
 	return partition;
 }
 
+//쉬트라센 행렬 곱셈 알고리즘 
 void strassen(vector<vector<int>> &A, vector <vector<int>>&B, vector<vector<int>> &C)
 {
 	if (A.size() == 1)
-		C[0][0] = A[0][0] * B[0][0]%1000;
+		C[0][0] = A[0][0] * B[0][0];
 	else
 	{
 		vector<vector<int>> A11 = split_matrix(A, 0, 0);
@@ -43,10 +46,10 @@ void strassen(vector<vector<int>> &A, vector <vector<int>>&B, vector<vector<int>
 		vector<vector<int>> B21 = split_matrix(B, 1, 0);
 		vector<vector<int>> B22 = split_matrix(B, 1, 1);
 
-		vector < vector<int>> C11(A.size()/2, vector<int>(A.size()/2));
-		vector < vector<int>> C12(A.size()/2, vector<int>(A.size()/2));
-		vector < vector<int>> C21(A.size()/2, vector<int>(A.size()/2));
-		vector < vector<int>> C22(A.size()/2, vector<int>(A.size()/2));
+		vector < vector<int>> C11(A.size() / 2, vector<int>(A.size() / 2));
+		vector < vector<int>> C12(A.size() / 2, vector<int>(A.size() / 2));
+		vector < vector<int>> C21(A.size() / 2, vector<int>(A.size() / 2));
+		vector < vector<int>> C22(A.size() / 2, vector<int>(A.size() / 2));
 
 		vector<vector<int>>M1(A.size() / 2, vector<int>(A.size() / 2));
 		vector<vector<int>>M2(A.size() / 2, vector<int>(A.size() / 2));
@@ -111,52 +114,59 @@ void strassen(vector<vector<int>> &A, vector <vector<int>>&B, vector<vector<int>
 		//C11 C12 C21 C22 를 C 로 합치기
 		for (int i = 0; i < C11.size(); i++)
 			for (int j = 0; j < C11.size(); j++)
-				C[i][j] = C11[i][j]%1000;
+				C[i][j] = C11[i][j];
 
 		for (int i = 0; i < C12.size(); i++)
 			for (int j = 0; j < C12.size(); j++)
-				C[i][j + C12.size()] = C12[i][j]%1000;
+				C[i][j + C12.size()] = C12[i][j];
 
 		for (int i = 0; i < C21.size(); i++)
 			for (int j = 0; j < C21.size(); j++)
-				C[i + C21.size()][j] = C21[i][j]%1000;
+				C[i + C21.size()][j] = C21[i][j];
 
 		for (int i = 0; i < C22.size(); i++)
 			for (int j = 0; j < C22.size(); j++)
-				C[i + C22.size()][j + C22.size()] = C22[i][j]%1000;
+				C[i + C22.size()][j + C22.size()] = C22[i][j];
 	}
 }
 
-vector<vector<int>> square(vector<vector<int>>&A, long long size,int K)
+//행렬의 거듭제곱을 A^2 꼴로 바꾸어 분할정복하는 함수
+vector<vector<int>> square(vector<vector<int>>&A, long long size, int K)
 {
 	if (size == 1)
 	{
 		for (int i = 0; i < A.size(); i++)
 			for (int j = 0; j < A.size(); j++)
-				A[i][j] = A[i][j] % 1000;
+				A[i][j] = A[i][j] % 1000;	//원소값이 1000인 경우를 위한 모듈러 연산
 		return A;
 	}
-	if (size == 0)
-	{
-		vector<vector<int>> one(K, vector<int>(K, 1));
-		return one;
-	}
+
 	else
 	{
-		vector<vector<int>> temp = square(A, size / 2, K);
+		vector<vector<int>> temp = square(A, size / 2, K);	//거듭제곱 연산을 재귀적으로 호출하여 temp에 저장
 
-		if (size % 2)
+		if (size % 2)	//거듭제곱을 홀 수 번 할 때
 		{
 			vector<vector<int>> C(A.size(), vector<int>(A.size()));
-			strassen(temp, temp, C);
+			strassen(temp, temp, C);	//temp*temp 연산 =A^2
+			for (int i = 0; i < C.size(); i++)
+				for (int j = 0; j < C.size(); j++)
+					C[i][j] %= 1000;
+
 			vector<vector<int>>X(A.size(), vector<int>(A.size()));
-			strassen(A, C, X);
+			strassen(A, C, X);//연산값에 A행렬을 곱해준다.
+			for (int i = 0; i < X.size(); i++)
+				for (int j = 0; j < X.size(); j++)
+					X[i][j] %= 1000;
 			return X;
 		}
 		else
 		{
 			vector<vector<int>> X(A.size(), vector<int>(A.size()));
-			strassen(temp, temp, X);
+			strassen(temp, temp, X);	//temp*temp 연산=A^2
+			for (int i = 0; i < X.size(); i++)
+				for (int j = 0; j < X.size(); j++)
+					X[i][j] %= 1000;
 			return X;
 		}
 	}
@@ -178,7 +188,7 @@ int main()
 	while (K < N)	//최적의 정사각행렬을 만들기위한 K 선언
 		K = K * 2;
 
-	vector <vector <int>> A(K, vector<int>(K,0));		//K*K 행렬
+	vector <vector <int>> A(K, vector<int>(K, 0));		//K*K 행렬
 
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < N; j++)
@@ -186,7 +196,7 @@ int main()
 
 	vector<vector<int>> C(K, vector<int>(K));
 
-	C = square(A, B,K );
+	C = square(A, B, K);
 
 	//실 입력부분만 행렬곱 계산값을 출력
 	for (int i = 0; i < N; i++)
