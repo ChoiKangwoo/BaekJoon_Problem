@@ -4,23 +4,29 @@
 
 using namespace std;
 
-int binary_search(vector<int> &A, int low, int high,int n)
+int binary_search(vector<int> &A, int n)
 {
-	if (A[(low + high) / 2] == n)
-		return 1;
-	if (low + 1 == high)
-		if (A[low] != n || A[high] != n)
-			return -1;
+	int low = 0;
+	int high = A.size() - 1;
+	int mid;
 
-	if (A[(low + high) / 2] >= n)	//low 범위에 있음
-		binary_search(A, low, (low + high) / 2, n);
-	else
-		binary_search(A, (low + high) / 2, high, n);
+	while (low <= high)
+	{
+		mid = (low + high) / 2;
 
+		if (n < A[mid])
+			high = mid - 1;
+		else if (n > A[mid])
+			low = mid + 1;
+		else
+			return 1;
+	}
+	return 0;
 }
 
 int main()
 {
+	cin.tie(NULL);
 	int N;
 	cin >> N;
 
@@ -36,10 +42,10 @@ int main()
 	vector<int> B(M);
 	for (int i = 0; i < M; i++)
 		cin >> B[i];
-
+	int k = 0;
 	while (M--)
 	{
-		cout << binary_search(A, 0, A.size(), B[N - M]) << '\n';
+		cout << binary_search(A, B[k++]) << '\n';
 
 	}
 }
