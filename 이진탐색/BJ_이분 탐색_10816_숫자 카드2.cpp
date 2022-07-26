@@ -8,6 +8,8 @@ int counting[20000001] = { 0 };
 해당 숫자+10000000값을 인덱스로 삼아 입력받을 때마다 해당숫자의 counting[index]를 증가시키고
 이분탐색으로 해당 숫자가 나왔을 때 counting 값을 return 한다.
 */
+
+// 사용한 메모리: 83348 KB		걸린시간: 376ms
 int search_card(vector<int> &card,int m,int start,int end)
 {
 	int mid = (start + end) / 2;	//배열의 중간 인덱스 설정
