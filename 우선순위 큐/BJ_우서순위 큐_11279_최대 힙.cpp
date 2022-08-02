@@ -34,26 +34,22 @@ int main()
 
 void add(int x)
 {
-	heap[++node] = x;
-	int i = node;
-	while (i > 1)
+	int i = ++node;
+	while ((i != 1) && x > heap[i / 2])
 	{
-		if (heap[i] > heap[i / 2])
-		{
-			heap[i] = heap[i / 2];
-			heap[i / 2] = x;
-			i /= 2;
-		}
-
-		else
-			break;
+		heap[i] = heap[i / 2];
+		i /= 2;
 	}
+	heap[i] = x;
 }
 
 void print_out()
 {
-	if (heap[1] == 0)
+	if (node == 0)
+	{
 		ans.push_back(0);
+		return;
+	}
 	else
 		ans.push_back(heap[1]);
 
@@ -68,7 +64,7 @@ void print_out()
 	{
 		if (heap[child] < heap[child + 1] && child < node)
 			child++;
-		if (heap[child] <= heap[parent])
+		if (heap[child] <= temp)
 			break;
 
 		heap[parent] = heap[child];
