@@ -3,18 +3,19 @@
 
 using namespace std;
 
-vector<int> heap;
+vector<int> heap(100000, 0);
 vector<int>ans;
 int last = 0;
 
 void add_to_heap(int x)
 {
 	int index = ++last;
-	while(index!=1&&x<heap[index/2])
+	while (index != 1 && x < heap[index / 2])
 	{
 		heap[index] = heap[index / 2];
-		index/= 2;
+		index /= 2;
 	}
+	heap[index] = x;
 
 }
 
@@ -34,11 +35,11 @@ void del_heap()
 
 	int parent = 1;
 	int child = 2;
-	while (child<=last)
+	while (child <= last)
 	{
 		if (heap[child] > heap[child + 1] && child < last)
 			child++;
-		if (temp <= heap[child] )
+		if (temp <= heap[child])
 			break;
 
 		heap[parent] = heap[child];
@@ -47,11 +48,12 @@ void del_heap()
 	}
 
 	heap[parent] = temp;
-	
+
 }
 
 int main()
 {
+	cin.tie(NULL);
 	int N;
 	cin >> N;
 
@@ -65,6 +67,6 @@ int main()
 			del_heap();
 	}
 
-	for (int j =0 ; j < ans.size(); j++)
+	for (int j = 0; j < ans.size(); j++)
 		cout << ans[j] << '\n';
 }
